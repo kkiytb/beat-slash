@@ -50,8 +50,15 @@ const els = {
   hud: $('hud'), canvas: $('game-canvas')
 };
 
-const requiredIds = ['screen', 'canvas', 'startBtn', 'fileInput', 'dropZone', 'hud'];
-const missing = requiredIds.filter(key => !els[key]);
+const requiredChecks = [
+  { key: 'screens', test: v => v && v.menu },
+  { key: 'canvas', test: v => v },
+  { key: 'startBtn', test: v => v },
+  { key: 'fileInput', test: v => v },
+  { key: 'dropZone', test: v => v },
+  { key: 'hud', test: v => v }
+];
+const missing = requiredChecks.filter(c => !c.test(els[c.key])).map(c => c.key);
 if (missing.length) {
   showErr(`缺少关键元素: #${missing.join(', #')}，请检查 index.html 是否完整。`);
   throw new Error(`Missing required elements: ${missing.join(', ')}`);
