@@ -143,9 +143,9 @@ const ChartLoader = (() => {
     return { info, audioData: audioU8, coverUrl, _entries: entries };
   }
 
-  function buildGameChart(diffParsed, bpm) {
+  function buildGameChart(diffParsed, bpm, oneSaber) {
     const spb = 60 / bpm;
-    const notes = diffParsed.notes.map(n => ({
+    let notes = diffParsed.notes.map(n => ({
       time: n.beats * spb,
       hand: n.hand,
       col: n.col,
@@ -153,6 +153,9 @@ const ChartLoader = (() => {
       dir: n.dir,
       isBomb: false
     }));
+    if (oneSaber) {
+      notes = notes.filter(n => n.hand !== 0);
+    }
     for (const b of diffParsed.bombs) {
       notes.push({ time: b.beats * spb, hand: -1, col: b.col, layer: b.layer, dir: -1, isBomb: true });
     }

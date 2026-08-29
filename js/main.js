@@ -531,7 +531,7 @@ function startGame(isDemo) {
     try { parsed = CHART_LOADER.parseDifficulty(d.filename, loaded._entries); }
     catch (e) { setStatus(e.message, false); showScreen('loading'); return; }
   }
-  const chart = CHART_LOADER.buildGameChart(parsed, d.bpm || loaded.info.bpm);
+  const chart = CHART_LOADER.buildGameChart(parsed, d.bpm || loaded.info.bpm, curMode === 'OneSaber');
   curDiffLabel = `${d.characteristic}/${d.difficulty}`;
 
   playing = true;
