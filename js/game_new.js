@@ -78,6 +78,9 @@ export const Game = (() => {
     if (opts.oneSaber) {
       if (state.leftSaber) state.leftSaber.visible = false;
       if (state.leftTrailMesh) state.leftTrailMesh.visible = false;
+    } else {
+      if (state.leftSaber) state.leftSaber.visible = true;
+      if (state.leftTrailMesh) state.leftTrailMesh.visible = true;
     }
     state.mouseAssist = opts.mouseAssist === 'off' || opts.mouseAssist === 'beam' ? opts.mouseAssist : 'magnet';
     state.playRate = opts.playRate === 0.5 || opts.playRate === 0.75 ? opts.playRate : 1;
