@@ -83,8 +83,8 @@ let lastZipName = '';
 const store = k => `bslash_${k}`;
 
 const safeStorage = {
-  get(k) { try { return safeStorage.get(k); } catch { return null; } },
-  set(k, v) { try { safeStorage.set(k, v); } catch {} }
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} }
 };
 
 let keyMode = safeStorage.get(store('keymode')) === '8' || safeStorage.get(store('keymode')) === '2'

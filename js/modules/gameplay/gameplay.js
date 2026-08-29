@@ -26,8 +26,8 @@ import { dispatchError } from '../input/events.js';
 import { hashChart } from './replay.js';
 
 const safeStorage = {
-  get(k) { try { return safeStorage.get(k); } catch { return null; } },
-  set(k, v) { try { safeStorage.set(k, v); } catch {} }
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} }
 };
 
 function effDisplayDir(n) {

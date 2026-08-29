@@ -20,8 +20,8 @@ import { generateFromBuffer } from './modules/auto/autogen.js';
 window.THREE = THREE;
 
 const safeStorage = {
-  get(k) { try { return safeStorage.get(k); } catch { return null; } },
-  set(k, v) { try { safeStorage.set(k, v); } catch {} }
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} }
 };
 
 export const Game = (() => {
