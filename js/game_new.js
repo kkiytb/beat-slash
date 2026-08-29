@@ -75,6 +75,8 @@ export const Game = (() => {
     state.autoMode = !!opts.autoMode;
     state.crashCount = 0;
     state.keyMode = opts.keyMode === '8' || opts.keyMode === '2' ? opts.keyMode : '4';
+    if (state.leftSaber) state.leftSaber.visible = state.keyMode !== '2';
+    if (state.leftTrailMesh) state.leftTrailMesh.visible = state.keyMode !== '2';
     state.mouseAssist = opts.mouseAssist === 'off' || opts.mouseAssist === 'beam' ? opts.mouseAssist : 'magnet';
     state.playRate = opts.playRate === 0.5 || opts.playRate === 0.75 ? opts.playRate : 1;
     state.analyser = opts.analyser || null;
