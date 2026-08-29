@@ -50,8 +50,8 @@ const els = {
   hud: $('hud'), canvas: $('game-canvas')
 };
 
-const requiredIds = ['screen-menu', 'game-canvas', 'start-btn', 'file-input', 'drop-zone', 'hud'];
-const missing = requiredIds.filter(id => !els[id]);
+const requiredIds = ['screen', 'canvas', 'startBtn', 'fileInput', 'dropZone', 'hud'];
+const missing = requiredIds.filter(key => !els[key]);
 if (missing.length) {
   showErr(`缺少关键元素: #${missing.join(', #')}，请检查 index.html 是否完整。`);
   throw new Error(`Missing required elements: ${missing.join(', ')}`);
