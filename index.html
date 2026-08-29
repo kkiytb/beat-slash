@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beat Slash · 光剑音游</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<canvas id="game-canvas"></canvas>
+
+<div id="hud">
+  <div id="bs-vignette"></div>
+  <div id="bs-hp-bar"><div id="bs-hp-fill"></div></div>
+  <div class="bs-top-left">
+    <div id="bs-score">0</div>
+    <div id="bs-acc">100%</div>
+  </div>
+  <div id="bs-combo"></div>
+  <canvas id="bs-timeline" width="280" height="108"></canvas>
+  <div id="bs-progress"><div id="bs-progress-fill"></div></div>
+  <div id="bs-time">0:00 / 0:00</div>
+  <div id="bs-popups"></div>
+  <div class="bs-help">
+    <span class="red">■ 红·键盘</span> 按箭头方向按键 &nbsp;|&nbsp;
+    <span class="blue">■ 蓝·鼠标</span> 碰到即切，快挥回血、慢蹭不回血，躲开黑炸弹
+  </div>
+  <div id="bs-pause">
+    <div class="pause-box">
+      <h2>已暂停</h2>
+      <div class="pause-slider">
+        <span>流速</span>
+        <input type="range" id="pause-speed-range" min="0.1" max="1.5" step="0.05" value="1">
+        <span id="pause-speed-val">×1.00</span>
+      </div>
+      <button id="bs-resume">继续 (Esc)</button>
+      <button id="bs-restart-btn">重新开始</button>
+      <button id="bs-quit-btn">退出歌曲</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen active" id="screen-menu">
+  <div class="menu-wrap">
+    <header class="menu-top">
+      <h1>BEAT<span>SLASH</span></h1>
+      <div class="menu-sub">BeatSaber 谱面 · 键鼠双持光剑 · 舞台舞者</div>
+    </header>
+
+    <div class="menu-main">
+      <section class="song-side">
+        <div id="drop-zone">
+          <input type="file" id="file-input" accept=".zip,.mp3,.ogg,.oga,.wav,.flac,.m4a,.aac,.opus,.webm" hidden>
+          <div class="dz-icon">
+            <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"/>
+              <circle cx="6" cy="18" r="3"/>
+              <circle cx="18" cy="16" r="3"/>
+            </svg>
+          </div>
+          <div id="track-name">点击选择或拖入 音频 / 谱面 zip</div>
+          <div class="hint">mp3 / ogg / wav 导入后 AI 生成谱面 · zip 为完整制谱包</div>
+        </div>
+
+        <div id="song-card">
+          <div class="cover-wrap">
+            <img id="cover-img" alt="" hidden>
+            <div class="cover-fallback">♪</div>
+          </div>
+          <div class="song-meta">
+            <div id="track-name2" class="song-title"></div>
+            <div id="song-artist" class="song-artist"></div>
+            <table class="song-table">
+              <tr><td>BPM</td><td id="m-bpm">—</td></tr>
+              <tr><td>时长</td><td id="m-dur">—</td></tr>
+              <tr><td>制谱</td><td id="m-mapper">—</td></tr>
+              <tr><td>物件</td><td id="m-notes">—</td></tr>
+              <tr><td>NJS</td><td id="m-njs">—</td></tr>
+            </table>
+            <button id="change-file" class="mini-btn">更换谱面</button>
+          </div>
+        </div>
+
+        <div class="howto">
+          <p><span class="red">■ 红·键盘</span> 按箭头方向按键，斜向并入上下，圆点任意键</p>
+          <p><span class="blue">■ 蓝·鼠标</span> 碰到就算切中，快挥分更高，躲开黑炸弹</p>
+          <p class="dim-line">Esc 暂停 · 血条耗尽失败 · 支持拖拽导入</p>
+        </div>
+      </section>
+
+      <section class="set-side">
+        <div class="set-row">
+          <span class="set-label">模式</span>
+          <div id="mode-row" class="chips"></div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">难度</span>
+          <div id="diff-list" class="chips"></div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">自动谱面</span>
+          <div class="chips">
+            <button id="auto-gen-btn" class="pill" disabled title="分析音频，按人声+乐器节奏自动生成三档难度">✨ 一键生成三档谱面</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">界面风格</span>
+          <div id="theme-row" class="chips">
+            <button data-theme="vr" class="sel">赛道 3D</button>
+            <button data-theme="classic">经典简洁</button>
+            <button data-theme="noir">黑金电竞</button>
+            <button data-theme="light">极简白昼</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">键盘方向</span>
+          <div id="km-row" class="chips">
+            <button data-km="2">2 向 随意按</button>
+            <button data-km="4" class="sel">4 向 推荐</button>
+            <button data-km="8">8 向 原版</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">鼠标辅助</span>
+          <div id="assist-row" class="chips">
+            <button data-assist="off">关闭 硬核</button>
+            <button data-assist="magnet" class="sel">磁吸 推荐</button>
+            <button data-assist="beam">光柱 最易</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">练习速度</span>
+          <div id="rate-row" class="chips">
+            <button data-rate="1" class="sel">×1.00</button>
+            <button data-rate="0.75">×0.75</button>
+            <button data-rate="0.5">×0.50</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">音符大小</span>
+          <div id="size-row" class="chips">
+            <button data-size="0.8">较小</button>
+            <button data-size="1" class="sel">标准</button>
+            <button data-size="1.25">较大</button>
+            <button data-size="1.5">特大</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">录制视频</span>
+          <div id="vid-row" class="chips">
+            <button data-vid="off" class="sel">关闭</button>
+            <button data-vid="on">开启 · 结束自动下载</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">幽灵回放</span>
+          <div id="ghost-row" class="chips">
+            <button data-ghost="on" class="sel">开启 推荐</button>
+            <button data-ghost="off">关闭</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">画质</span>
+          <div id="gfx-row" class="chips">
+            <button data-gfx="high" class="sel">高画质</button>
+            <button data-gfx="off">流畅优先</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label">斩击音效</span>
+          <div id="sfx-row" class="chips">
+            <button data-sfx="on" class="sel">开启</button>
+            <button data-sfx="off">关闭</button>
+          </div>
+        </div>
+        <div class="set-row slider-row">
+          <span class="set-label">流速倍率</span>
+          <input type="range" id="speed-range" min="0.1" max="1.5" step="0.05" value="1">
+          <span id="speed-val" class="slider-val"></span>
+        </div>
+        <div class="set-row slider-row">
+          <span class="set-label">音量</span>
+          <input type="range" id="vol-range" min="0" max="1" step="0.05" value="0.8">
+          <span id="vol-val" class="slider-val"></span>
+        </div>
+        <div class="set-row slider-row">
+          <span class="set-label">延迟校准</span>
+          <input type="range" id="offset-range" min="-300" max="300" step="5" value="0">
+          <span id="offset-val" class="slider-val"></span>
+        </div>
+      </section>
+    </div>
+
+    <footer class="menu-actions">
+      <button id="start-btn" disabled>开 始</button>
+      <button id="demo-btn" disabled class="ghost">▶ 演示谱面</button>
+    </footer>
+    <div class="menu-foot">Beat Slash · 本地谱面播放器 · Enter 快速开始 · 谱面版权归各自制谱者</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-loading">
+  <div class="panel small">
+    <h2>分析中…</h2>
+    <div id="load-bar"><div id="load-fill"></div></div>
+    <div id="load-status">准备…</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-result">
+  <div class="panel small result-panel">
+    <h2 id="result-title">CLEAR!</h2>
+    <div id="result-fc">FULL COMBO</div>
+    <div id="result-hero">
+      <div id="result-trophy"></div>
+      <div class="rank-col">
+        <div id="result-rank">S</div>
+        <div id="result-rank-label"></div>
+      </div>
+    </div>
+    <div id="result-score">0</div>
+    <div id="result-best"></div>
+    <div id="result-ghost">★ 已保存最佳录像 · 下次同谱面将出现幽灵</div>
+    <div class="stat-grid">
+      <span>准确率</span><b id="result-acc">0%</b>
+      <span>最大连击</span><b id="result-max-combo">0</b>
+      <span>命中</span><b id="result-hits">0</b>
+      <span>Miss</span><b id="result-misses">0</b>
+      <span>总音符</span><b id="result-total">0</b>
+    </div>
+    <div class="btn-row">
+      <button id="retry-btn">再来一次</button>
+      <button id="back-btn">返回菜单</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/vendor/three.min.js"></script>
+<script src="js/vendor/fflate.min.js"></script>
+<script src="js/chartloader.js"></script>
+<script src="js/dancers.js"></script>
+<script src="js/game_new.js" type="module"></script>
+<script src="js/main.js" type="module"></script>
+</body>
+</html>
