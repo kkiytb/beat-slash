@@ -403,7 +403,7 @@ h1 { font-size: 42px; letter-spacing: 6px; }
 }
 .chips button:hover { border-color: var(--accent); transform: translateY(-1px); }
 .chips button:hover::before { opacity: 1; }
-.chips button.sel {
+.chips button.sel:not(.pill) {
   border-color: rgba(170,148,255,0.9);
   color: #fff;
   background: linear-gradient(135deg, rgba(124,92,255,0.22), rgba(34,211,238,0.16));
@@ -645,7 +645,7 @@ h1 span {
   transition: all .16s ease;
 }
 .chips button:hover { border-color: rgba(124,92,255,.7); background: rgba(124,92,255,.12); transform: translateY(-1px); }
-.chips button.sel {
+.chips button.sel:not(.pill) {
   background: linear-gradient(120deg, rgba(124,92,255,.34), rgba(34,211,238,.24));
   border: 1px solid rgba(160,130,255,.85);
   box-shadow: 0 0 16px rgba(124,92,255,.4), 0 1px 0 rgba(255,255,255,.15) inset;
@@ -1019,7 +1019,7 @@ body.theme-vr .chips button {
   border-color: rgba(143,157,220,0.2);
   color: var(--text);
 }
-body.theme-vr .chips button.sel {
+body.theme-vr .chips button.sel:not(.pill) {
   background: linear-gradient(135deg, rgba(124,92,255,0.26), rgba(34,211,238,0.18));
   border-color: rgba(124,92,255,0.8);
   box-shadow: 0 0 14px rgba(124,92,255,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
@@ -1114,7 +1114,7 @@ body.theme-classic .chips button {
   border-color: rgba(96,117,165,0.2);
   color: var(--text);
 }
-body.theme-classic .chips button.sel {
+body.theme-classic .chips button.sel:not(.pill) {
   background: linear-gradient(135deg, rgba(74,124,255,0.24), rgba(43,140,255,0.18));
   border-color: rgba(74,124,255,0.7);
   box-shadow: 0 0 14px rgba(74,124,255,0.18), inset 0 1px 0 rgba(255,255,255,0.2);
@@ -1181,7 +1181,7 @@ body.theme-noir .chips button {
   border-color: rgba(164, 176, 255, 0.15);
   color: var(--text);
 }
-body.theme-noir .chips button.sel {
+body.theme-noir .chips button.sel:not(.pill) {
   background: linear-gradient(135deg, rgba(163,107,255,0.24), rgba(60,170,255,0.16));
   border-color: rgba(163,107,255,0.75);
   box-shadow: 0 0 16px rgba(163,107,255,0.24), inset 0 1px 0 rgba(255,255,255,0.1);
@@ -1234,7 +1234,7 @@ body.theme-light .chips button {
   border-color: rgba(92, 128, 204, 0.2);
   color: var(--text);
 }
-body.theme-light .chips button.sel {
+body.theme-light .chips button.sel:not(.pill) {
   background: linear-gradient(135deg, rgba(92,140,255,0.16), rgba(45,168,255,0.12));
   border-color: rgba(92,140,255,0.72);
   box-shadow: 0 0 14px rgba(92,140,255,0.12), inset 0 1px 0 rgba(255,255,255,0.4);
