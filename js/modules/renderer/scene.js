@@ -44,6 +44,7 @@ export function initRenderer(canvasEl) {
       state.renderer.dispose();
       state.renderer = null;
     }
+    state.inited = false;
     initRenderer(canvasEl);
   }, false);
 
