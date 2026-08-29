@@ -555,6 +555,7 @@ function startGame(isDemo) {
     videoRecording: withVideo,
     speedMult: Number(els.speedRange.value),
     offsetMs: Number(els.offsetRange.value),
+    oneSaber: curMode === 'OneSaber',
     ui: gameUi,
     onFrame: withVideo ? composeRecordingFrame : null,
     onFinish: res => {
