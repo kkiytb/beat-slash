@@ -651,12 +651,6 @@ h1 span {
   box-shadow: 0 0 16px rgba(124,92,255,.4), 0 1px 0 rgba(255,255,255,.15) inset;
   color: #fff;
 }
-.chips button.pill.sel {
-  background: linear-gradient(120deg, rgba(255,45,85,.3), rgba(124,92,255,.3));
-  border-color: rgba(255,105,140,.8);
-  box-shadow: 0 0 16px rgba(255,45,85,.35);
-}
-
 /* --- primary buttons: glossy gradient + sheen --- */
 button:not(.chips button):not(.mini-btn) {
   position: relative; overflow: hidden;
