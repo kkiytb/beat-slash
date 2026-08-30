@@ -1,5 +1,12 @@
 'use strict';
 
+function _t(key, vars) {
+  try {
+    if (window.BS_i18n && window.BS_i18n.t) return window.BS_i18n.t(key, vars);
+  } catch (e) {}
+  return key;
+}
+
 const ChartLoader = (() => {
 
   function findEntry(entries, name) {
@@ -43,7 +50,7 @@ const ChartLoader = (() => {
       }
     }
     return {
-      songName: pick(raw, '_songName', 'songName') || '未知曲名',
+      songName: pick(raw, '_songName', 'songName') || _t('defaults.unknownTitle'),
       subName: pick(raw, '_songSubName', 'songSubName') || '',
       artist: pick(raw, '_songAuthorName', 'songAuthorName') || '',
       mapper: pick(raw, '_levelAuthorName', 'levelAuthorName') || '',
@@ -59,7 +66,7 @@ const ChartLoader = (() => {
 
   function parseDifficulty(filename, entries) {
     const u8 = findEntry(entries, filename);
-    if (!u8) throw new Error(`缺少难度文件 ${filename}`);
+    if (!u8) throw new Error(_t('chart.missingDiff', { file: filename }));
     const d = JSON.parse(decodeText(u8));
 
     if (Array.isArray(d.colorNotes)) {
@@ -104,7 +111,7 @@ const ChartLoader = (() => {
       return { format: 'v2', notes, bombs };
     }
 
-    throw new Error('无法识别的谱面格式（仅支持 v2 / v3）');
+    throw new Error(_t('chart.unknownFormat'));
   }
 
   function clampInt(v, lo, hi) {
@@ -114,23 +121,23 @@ const ChartLoader = (() => {
   }
 
   async function load(arrayBuffer) {
-    if (typeof fflate === 'undefined') throw new Error('解压库未加载');
+    if (typeof fflate === 'undefined') throw new Error(_t('chart.zipLibMissing'));
     let entries;
     try {
       entries = fflate.unzipSync(new Uint8Array(arrayBuffer));
     } catch (e) {
-      throw new Error('不是有效的 zip 文件');
+      throw new Error(_t('chart.notZip'));
     }
 
     const infoU8 = findEntry(entries, 'Info.dat');
-    if (!infoU8) throw new Error('zip 中找不到 Info.dat');
+    if (!infoU8) throw new Error(_t('chart.noInfo'));
     const info = parseInfo(infoU8);
 
-    if (!info.songFilename) throw new Error('Info.dat 未指定音频文件');
+    if (!info.songFilename) throw new Error(_t('chart.noAudioInInfo'));
     const audioU8 = findEntry(entries, info.songFilename);
-    if (!audioU8) throw new Error(`zip 中找不到音频文件 ${info.songFilename}`);
+    if (!audioU8) throw new Error(_t('chart.noAudioFile', { file: info.songFilename }));
 
-    if (!info.diffs.length) throw new Error('Info.dat 中没有任何难度');
+    if (!info.diffs.length) throw new Error(_t('chart.noDifficulties'));
 
     let coverUrl = null;
     if (info.coverFilename) {

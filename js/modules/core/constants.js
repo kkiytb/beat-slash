@@ -188,7 +188,7 @@ export const IDLE_ANGLE = 68;
 export const AUTO_REST = { x: 1.7, y: 0.85 };
 
 export const TIER_BASE = [30, 60, 100];
-export const TIER_TEXT = ['慢切', 'GOOD', 'PERFECT'];
+export const TIER_TEXT_KEYS = ['popup.tier.0', 'popup.tier.1', 'popup.tier.2'];
 export const TIER_COLOR = ['#8fb0ff', '#7ef29a', '#ffd54a'];
 
 export const KEYMAP = {

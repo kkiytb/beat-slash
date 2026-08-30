@@ -1,3 +1,10 @@
+function _t(key, vars) {
+  try {
+    if (window.BS_i18n && window.BS_i18n.t) return window.BS_i18n.t(key, vars);
+  } catch (e) {}
+  return key;
+}
+
 // Auto chart generator v3: YIN pitch tracking (vocals -> melody "MIDI" notes)
 // hybridized with band-flux drum onsets. Pitch contour drives note positions.
 // Pure functions, no DOM — runs in browser and Node.
@@ -508,9 +515,9 @@ function buildChart(analysis, cfg, rng) {
 export function generateDiffs(analysis, opts = {}) {
   const rng = opts.rng || Math.random;
   const configs = [
-    { label: 'AI Easy', minGap: 0.4, maxNps: 2.6, njs: 11, minNoteDur: 0.24, doubles: false },
-    { label: 'AI Normal', minGap: 0.22, maxNps: 4.8, njs: 14, minNoteDur: 0.14, doubles: true },
-    { label: 'AI Expert', minGap: 0.14, maxNps: 8.0, njs: 16, minNoteDur: 0.09, doubles: true }
+    { label: 'AI Easy', labelKey: 'diff.AI Easy', minGap: 0.4, maxNps: 2.6, njs: 11, minNoteDur: 0.24, doubles: false },
+    { label: 'AI Normal', labelKey: 'diff.AI Normal', minGap: 0.22, maxNps: 4.8, njs: 14, minNoteDur: 0.14, doubles: true },
+    { label: 'AI Expert', labelKey: 'diff.AI Expert', minGap: 0.14, maxNps: 8.0, njs: 16, minNoteDur: 0.09, doubles: true }
   ];
   const diffs = configs.map(cfg => {
     const notes = buildChart(analysis, cfg, rng);
@@ -525,7 +532,7 @@ export function generateDiffs(analysis, opts = {}) {
 
 export async function generateFromBuffer(audioBuffer, onProgress) {
   const analysis = await analyzeAudio(audioBuffer, onProgress);
-  if (!analysis.melody.length && !analysis.onsets.length) throw new Error('未能检测到节奏点（音频太安静？）');
+  if (!analysis.melody.length && !analysis.onsets.length) throw new Error(_t('status.genNoOnsets'));
   if (onProgress) onProgress(0.97);
   const res = generateDiffs(analysis);
   if (onProgress) onProgress(1);

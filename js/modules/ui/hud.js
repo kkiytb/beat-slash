@@ -1,6 +1,7 @@
 import { state } from '../core/state.js';
 import { fmtTime } from '../core/utils.js';
 import { HAND_RED } from '../core/constants.js';
+import { t } from './i18n.js';
 
 let lastCombo = -1;
 let lastComboKey = '';
@@ -106,7 +107,7 @@ function drawTimeline(st) {
   ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(nowX, 4); ctx.lineTo(nowX, H - 4); ctx.stroke();
   ctx.fillStyle = 'rgba(255,255,255,.6)';
-  ctx.fillText('NOW', 4, H - 4);
+  ctx.fillText(t('hud.now'), 4, H - 4);
 }
 
 export function updateHud(force) {
@@ -118,7 +119,7 @@ export function updateHud(force) {
     const rainbow = c >= 1000;
     const key = rainbow ? 'mult-rainbow' : (tier > 1 ? `mult-${tier}` : '');
     state.ui.hudCombo.innerHTML = c > 1
-      ? (tier > 1 ? `<span class="combo-mult">×${tier}</span>` : '') + `<span class="combo-body"><span class="combo-num">${c}</span><span class="combo-lbl">Combo</span></span>`
+      ? (tier > 1 ? `<span class="combo-mult">×${tier}</span>` : '') + `<span class="combo-body"><span class="combo-num">${c}</span><span class="combo-lbl">${t('hud.combo')}</span></span>`
       : '';
     if (key !== lastComboKey) {
       state.ui.hudCombo.classList.remove('mult-2', 'mult-4', 'mult-8', 'mult-rainbow');

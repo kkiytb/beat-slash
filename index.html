@@ -26,20 +26,20 @@
   <div id="bs-time">0:00 / 0:00</div>
   <div id="bs-popups"></div>
   <div class="bs-help">
-    <span class="red">■ 红·键盘</span> 按箭头方向按键 &nbsp;|&nbsp;
-    <span class="blue">■ 蓝·鼠标</span> 碰到即切，快挥回血、慢蹭不回血，躲开黑炸弹
+    <span class="red" data-i18n="hud.help.red">■ 红·键盘</span> <span data-i18n="hud.help.red.desc">按箭头方向按键</span> &nbsp;|&nbsp;
+    <span class="blue" data-i18n="hud.help.blue">■ 蓝·鼠标</span> <span data-i18n="hud.help.blue.desc">碰到即切，快挥回血、慢蹭不回血，躲开黑炸弹</span>
   </div>
   <div id="bs-pause">
     <div class="pause-box">
-      <h2>已暂停</h2>
+      <h2 data-i18n="pause.title">已暂停</h2>
       <div class="pause-slider">
-        <span>流速</span>
+        <span data-i18n="pause.speed">流速</span>
         <input type="range" id="pause-speed-range" min="0.1" max="1.5" step="0.05" value="1">
         <span id="pause-speed-val">×1.00</span>
       </div>
-      <button id="bs-resume">继续 (Esc)</button>
-      <button id="bs-restart-btn">重新开始</button>
-      <button id="bs-quit-btn">退出歌曲</button>
+      <button id="bs-resume" data-i18n="pause.resume">继续 (Esc)</button>
+      <button id="bs-restart-btn" data-i18n="pause.restart">重新开始</button>
+      <button id="bs-quit-btn" data-i18n="pause.quit">退出歌曲</button>
     </div>
   </div>
 </div>
@@ -47,8 +47,8 @@
 <div class="screen active" id="screen-menu">
   <div class="menu-wrap">
     <header class="menu-top">
-      <h1>BEAT<span>SLASH</span></h1>
-      <div class="menu-sub">BeatSaber 谱面 · 键鼠双持光剑 · 舞台舞者</div>
+      <h1><span data-i18n="menu.title">BEAT</span><span data-i18n="menu.title.span">SLASH</span></h1>
+      <div class="menu-sub" data-i18n="menu.subtitle">BeatSaber 谱面 · 键鼠双持光剑 · 舞台舞者</div>
     </header>
 
     <div class="menu-main">
@@ -62,133 +62,140 @@
               <circle cx="18" cy="16" r="3"/>
             </svg>
           </div>
-          <div id="track-name">点击选择或拖入 音频 / 谱面 zip</div>
-          <div class="hint">mp3 / ogg / wav 导入后 AI 生成谱面 · zip 为完整制谱包</div>
+          <div id="track-name" data-i18n="menu.drop.prompt">点击选择或拖入 音频 / 谱面 zip</div>
+          <div class="hint" data-i18n="menu.drop.hint">mp3 / ogg / wav 导入后 AI 生成谱面 · zip 为完整制谱包</div>
         </div>
 
         <div id="song-card">
           <div class="cover-wrap">
             <img id="cover-img" alt="" hidden>
-            <div class="cover-fallback">♪</div>
+            <div class="cover-fallback" data-i18n="menu.cover.fallback">♪</div>
           </div>
           <div class="song-meta">
             <div id="track-name2" class="song-title"></div>
             <div id="song-artist" class="song-artist"></div>
             <table class="song-table">
-              <tr><td>BPM</td><td id="m-bpm">—</td></tr>
-              <tr><td>时长</td><td id="m-dur">—</td></tr>
-              <tr><td>制谱</td><td id="m-mapper">—</td></tr>
-              <tr><td>物件</td><td id="m-notes">—</td></tr>
-              <tr><td>NJS</td><td id="m-njs">—</td></tr>
+              <tr><td data-i18n="menu.table.bpm">BPM</td><td id="m-bpm">—</td></tr>
+              <tr><td data-i18n="menu.table.duration">时长</td><td id="m-dur">—</td></tr>
+              <tr><td data-i18n="menu.table.mapper">制谱</td><td id="m-mapper">—</td></tr>
+              <tr><td data-i18n="menu.table.notes">物件</td><td id="m-notes">—</td></tr>
+              <tr><td data-i18n="menu.table.njs">NJS</td><td id="m-njs">—</td></tr>
             </table>
-            <button id="change-file" class="mini-btn">更换谱面</button>
+            <button id="change-file" class="mini-btn" data-i18n="menu.change">更换谱面</button>
           </div>
         </div>
 
         <div class="howto">
-          <p><span class="red">■ 红·键盘</span> 按箭头方向按键，斜向并入上下，圆点任意键</p>
-          <p><span class="blue">■ 蓝·鼠标</span> 碰到就算切中，快挥分更高，躲开黑炸弹</p>
-          <p class="dim-line">Esc 暂停 · 血条耗尽失败 · 支持拖拽导入</p>
+          <p><span class="red" data-i18n="hud.help.red">■ 红·键盘</span> <span data-i18n="menu.howto.red.desc">按箭头方向按键，斜向并入上下，圆点任意键</span></p>
+          <p><span class="blue" data-i18n="hud.help.blue">■ 蓝·鼠标</span> <span data-i18n="menu.howto.blue.desc">碰到就算切中，快挥分更高，躲开黑炸弹</span></p>
+          <p class="dim-line" data-i18n="menu.howto.dim">Esc 暂停 · 血条耗尽失败 · 支持拖拽导入</p>
         </div>
       </section>
 
       <section class="set-side">
         <div class="set-row">
-          <span class="set-label">模式</span>
+          <span class="set-label" data-i18n="menu.label.mode">模式</span>
           <div id="mode-row" class="chips"></div>
         </div>
         <div class="set-row">
-          <span class="set-label">难度</span>
+          <span class="set-label" data-i18n="menu.label.diff">难度</span>
           <div id="diff-list" class="chips"></div>
         </div>
         <div class="set-row">
-          <span class="set-label">自动谱面</span>
+          <span class="set-label" data-i18n="menu.label.auto">自动谱面</span>
           <div class="chips">
-            <button id="auto-gen-btn" class="pill" disabled title="分析音频，按人声+乐器节奏自动生成三档难度">✨ 一键生成三档谱面</button>
+            <button id="auto-gen-btn" class="pill" disabled data-i18n-title="menu.auto.title" title="分析音频，按人声+乐器节奏自动生成三档难度"><span data-i18n="menu.auto.label">✨ 一键生成三档谱面</span></button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">界面风格</span>
+          <span class="set-label" data-i18n="menu.label.theme">界面风格</span>
           <div id="theme-row" class="chips">
-            <button data-theme="vr" class="sel">赛道 3D</button>
-            <button data-theme="classic">经典简洁</button>
-            <button data-theme="noir">黑金电竞</button>
-            <button data-theme="light">极简白昼</button>
+            <button data-theme="vr" class="sel" data-i18n="menu.theme.vr">赛道 3D</button>
+            <button data-theme="classic" data-i18n="menu.theme.classic">经典简洁</button>
+            <button data-theme="noir" data-i18n="menu.theme.noir">黑金电竞</button>
+            <button data-theme="light" data-i18n="menu.theme.light">极简白昼</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">键盘方向</span>
+          <span class="set-label" data-i18n="menu.label.keyboard">键盘方向</span>
           <div id="km-row" class="chips">
-            <button data-km="2">2 向 随意按</button>
-            <button data-km="4" class="sel">4 向 推荐</button>
-            <button data-km="8">8 向 原版</button>
+            <button data-km="2" data-i18n="menu.keymode.2">2 向 随意按</button>
+            <button data-km="4" class="sel" data-i18n="menu.keymode.4">4 向 推荐</button>
+            <button data-km="8" data-i18n="menu.keymode.8">8 向 原版</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">鼠标辅助</span>
+          <span class="set-label" data-i18n="menu.label.assist">鼠标辅助</span>
           <div id="assist-row" class="chips">
-            <button data-assist="off">关闭 硬核</button>
-            <button data-assist="magnet" class="sel">磁吸 推荐</button>
-            <button data-assist="beam">光柱 最易</button>
+            <button data-assist="off" data-i18n="menu.assist.off">关闭 硬核</button>
+            <button data-assist="magnet" class="sel" data-i18n="menu.assist.magnet">磁吸 推荐</button>
+            <button data-assist="beam" data-i18n="menu.assist.beam">光柱 最易</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">练习速度</span>
+          <span class="set-label" data-i18n="menu.label.rate">练习速度</span>
           <div id="rate-row" class="chips">
-            <button data-rate="1" class="sel">×1.00</button>
-            <button data-rate="0.75">×0.75</button>
-            <button data-rate="0.5">×0.50</button>
+            <button data-rate="1" class="sel" data-i18n="menu.rate.1">×1.00</button>
+            <button data-rate="0.75" data-i18n="menu.rate.075">×0.75</button>
+            <button data-rate="0.5" data-i18n="menu.rate.05">×0.50</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">音符大小</span>
+          <span class="set-label" data-i18n="menu.label.size">音符大小</span>
           <div id="size-row" class="chips">
-            <button data-size="0.8">较小</button>
-            <button data-size="1" class="sel">标准</button>
-            <button data-size="1.25">较大</button>
-            <button data-size="1.5">特大</button>
+            <button data-size="0.8" data-i18n="menu.size.08">较小</button>
+            <button data-size="1" class="sel" data-i18n="menu.size.1">标准</button>
+            <button data-size="1.25" data-i18n="menu.size.125">较大</button>
+            <button data-size="1.5" data-i18n="menu.size.15">特大</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">录制视频</span>
+          <span class="set-label" data-i18n="menu.label.video">录制视频</span>
           <div id="vid-row" class="chips">
-            <button data-vid="off" class="sel">关闭</button>
-            <button data-vid="on">开启 · 结束自动下载</button>
+            <button data-vid="off" class="sel" data-i18n="menu.video.off">关闭</button>
+            <button data-vid="on" data-i18n="menu.video.on">开启 · 结束自动下载</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">幽灵回放</span>
+          <span class="set-label" data-i18n="menu.label.ghost">幽灵回放</span>
           <div id="ghost-row" class="chips">
-            <button data-ghost="on" class="sel">开启 推荐</button>
-            <button data-ghost="off">关闭</button>
+            <button data-ghost="on" class="sel" data-i18n="menu.ghost.on">开启 推荐</button>
+            <button data-ghost="off" data-i18n="menu.ghost.off">关闭</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">画质</span>
+          <span class="set-label" data-i18n="menu.label.gfx">画质</span>
           <div id="gfx-row" class="chips">
-            <button data-gfx="high" class="sel">高画质</button>
-            <button data-gfx="off">流畅优先</button>
+            <button data-gfx="high" class="sel" data-i18n="menu.gfx.high">高画质</button>
+            <button data-gfx="off" data-i18n="menu.gfx.off">流畅优先</button>
           </div>
         </div>
         <div class="set-row">
-          <span class="set-label">斩击音效</span>
+          <span class="set-label" data-i18n="menu.label.sfx">斩击音效</span>
           <div id="sfx-row" class="chips">
-            <button data-sfx="on" class="sel">开启</button>
-            <button data-sfx="off">关闭</button>
+            <button data-sfx="on" class="sel" data-i18n="menu.sfx.on">开启</button>
+            <button data-sfx="off" data-i18n="menu.sfx.off">关闭</button>
+          </div>
+        </div>
+        <div class="set-row">
+          <span class="set-label" data-i18n="menu.label.language">语言</span>
+          <div id="lang-row" class="chips">
+            <button data-lang="zh-CN" class="sel" data-i18n="menu.language.zh">中文</button>
+            <button data-lang="en" data-i18n="menu.language.en">English</button>
           </div>
         </div>
         <div class="set-row slider-row">
-          <span class="set-label">流速倍率</span>
+          <span class="set-label" data-i18n="menu.label.speed">流速倍率</span>
           <input type="range" id="speed-range" min="0.1" max="1.5" step="0.05" value="1">
           <span id="speed-val" class="slider-val"></span>
         </div>
         <div class="set-row slider-row">
-          <span class="set-label">音量</span>
+          <span class="set-label" data-i18n="menu.label.volume">音量</span>
           <input type="range" id="vol-range" min="0" max="1" step="0.05" value="0.8">
           <span id="vol-val" class="slider-val"></span>
         </div>
         <div class="set-row slider-row">
-          <span class="set-label">延迟校准</span>
+          <span class="set-label" data-i18n="menu.label.offset">延迟校准</span>
           <input type="range" id="offset-range" min="-300" max="300" step="5" value="0">
           <span id="offset-val" class="slider-val"></span>
         </div>
@@ -196,25 +203,25 @@
     </div>
 
     <footer class="menu-actions">
-      <button id="start-btn" disabled>开 始</button>
-      <button id="demo-btn" disabled class="ghost">▶ 演示谱面</button>
+      <button id="start-btn" disabled data-i18n="menu.start">开 始</button>
+      <button id="demo-btn" disabled class="ghost" data-i18n="menu.demo">▶ 演示谱面</button>
     </footer>
-    <div class="menu-foot">Beat Slash · 本地谱面播放器 · Enter 快速开始 · 谱面版权归各自制谱者</div>
+    <div class="menu-foot" data-i18n="menu.foot">Beat Slash · 本地谱面播放器 · Enter 快速开始 · 谱面版权归各自制谱者</div>
   </div>
 </div>
 
 <div class="screen" id="screen-loading">
   <div class="panel small">
-    <h2>分析中…</h2>
+    <h2 data-i18n="loading.title">分析中…</h2>
     <div id="load-bar"><div id="load-fill"></div></div>
-    <div id="load-status">准备…</div>
+    <div id="load-status" data-i18n="loading.preparing">准备…</div>
   </div>
 </div>
 
 <div class="screen" id="screen-result">
   <div class="panel small result-panel">
-    <h2 id="result-title">CLEAR!</h2>
-    <div id="result-fc">FULL COMBO</div>
+    <h2 id="result-title" data-i18n="result.clear">CLEAR!</h2>
+    <div id="result-fc" data-i18n="result.fc">FULL COMBO</div>
     <div id="result-hero">
       <div id="result-trophy"></div>
       <div class="rank-col">
@@ -224,17 +231,17 @@
     </div>
     <div id="result-score">0</div>
     <div id="result-best"></div>
-    <div id="result-ghost">★ 已保存最佳录像 · 下次同谱面将出现幽灵</div>
+    <div id="result-ghost" data-i18n="result.ghost.saved">★ 已保存最佳录像 · 下次同谱面将出现幽灵</div>
     <div class="stat-grid">
-      <span>准确率</span><b id="result-acc">0%</b>
-      <span>最大连击</span><b id="result-max-combo">0</b>
-      <span>命中</span><b id="result-hits">0</b>
-      <span>Miss</span><b id="result-misses">0</b>
-      <span>总音符</span><b id="result-total">0</b>
+      <span data-i18n="result.stat.acc">准确率</span><b id="result-acc">0%</b>
+      <span data-i18n="result.stat.maxCombo">最大连击</span><b id="result-max-combo">0</b>
+      <span data-i18n="result.stat.hits">命中</span><b id="result-hits">0</b>
+      <span data-i18n="result.stat.miss">Miss</span><b id="result-misses">0</b>
+      <span data-i18n="result.stat.total">总音符</span><b id="result-total">0</b>
     </div>
     <div class="btn-row">
-      <button id="retry-btn">再来一次</button>
-      <button id="back-btn">返回菜单</button>
+      <button id="retry-btn" data-i18n="result.retry">再来一次</button>
+      <button id="back-btn" data-i18n="result.back">返回菜单</button>
     </div>
   </div>
 </div>

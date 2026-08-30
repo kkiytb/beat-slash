@@ -1,4 +1,6 @@
 import { Game } from './game_new.js';
+import { t, initI18n, getLang, setLang, getSupported, onChange } from './modules/ui/i18n.js';
+import { applyI18nToDOM } from './modules/ui/i18n-dom.js';
 
 const $ = id => document.getElementById(id);
 
@@ -15,10 +17,10 @@ errBanner.textContent = msg;
 clearTimeout(errHideT);
 errHideT = setTimeout(() => { if (errBanner) { errBanner.remove(); errBanner = null; } }, 12000);
 }
-window.addEventListener('error', e => showErr('脚本错误: ' + e.message));
+window.addEventListener('error', e => showErr(t('error.script', { error: e.message })));
 window.addEventListener('unhandledrejection', e =>
-showErr('Promise 错误: ' + ((e.reason && e.reason.message) || String(e.reason))));
-document.addEventListener('bs-error', e => showErr(String(e.detail || '未知错误')));
+showErr(t('error.promise', { error: (e.reason && e.reason.message) || String(e.reason) })));
+document.addEventListener('bs-error', e => showErr(String(e.detail || t('error.unknown'))));
 
 const els = {
   screens: {
@@ -60,7 +62,7 @@ const requiredChecks = [
 ];
 const missing = requiredChecks.filter(c => !c.test(els[c.key])).map(c => c.key);
 if (missing.length) {
-  showErr(`缺少关键元素: #${missing.join(', #')}，请检查 index.html 是否完整。`);
+  showErr(t('error.missingElements', { ids: missing.join(', #') }));
   throw new Error(`Missing required elements: ${missing.join(', ')}`);
 }
 
@@ -156,7 +158,7 @@ async function handleFile(file) {
   const isAudio = /\.(mp3|ogg|oga|wav|flac|m4a|aac|opus|webm)$/i.test(file.name);
   if (!isZip && !isAudio) {
     showScreen('loading');
-    setStatus('请导入谱面 zip 或音频文件（mp3 / ogg / wav / flac…）', false);
+    setStatus(t('status.invalidFile'), false);
     await waitBack();
     return;
   }
@@ -176,23 +178,23 @@ async function handleFile(file) {
   els.loadFill.style.width = '30%';
 
   if (isZip) {
-    setStatus('解压谱面…');
+    setStatus(t('status.unzipChart'));
     try {
       const buf = await file.arrayBuffer();
       loaded = await CHART_LOADER.load(buf);
     } catch (e) {
-      setStatus(e.message || '谱面解析失败', false);
+      setStatus(e.message || t('status.parseFail'), false);
       await waitBack();
       return;
     }
     els.loadFill.style.width = '60%';
 
-    setStatus('解码音频…');
+setStatus(t('status.decodeAudio'));
     try {
       const ab = loaded.audioData.slice().buffer;
       loaded.audioBuffer = await audioCtx.decodeAudioData(ab);
     } catch (e) {
-      setStatus(`音频解码失败（${loaded.info.songFilename}）— 浏览器可能不支持该编码`, false);
+      setStatus(t('status.decodeFail', { file: loaded.info.songFilename }), false);
       await waitBack();
       return;
     }
@@ -212,18 +214,18 @@ async function handleFile(file) {
       coverUrl: null,
       audioOnly: true,
       info: {
-        songName: lastZipName, subName: '', artist: '本地音频', mapper: 'AI 自动',
+        songName: lastZipName, subName: '', artist: t('defaults.localAudio'), mapper: t('defaults.aiAuto'),
         bpm: 120, songFilename: file.name, diffs: []
       }
     };
   } catch (e) {
-    setStatus(`音频解码失败 — 浏览器可能不支持 .${file.name.split('.').pop()} 格式`, false);
+    setStatus(t('status.decodeFailFmt', { ext: file.name.split('.').pop() }), false);
     await waitBack();
     return;
   }
   els.loadFill.style.width = '100%';
   renderMapUi();
-  setStatus('音频已导入 · 点「✨ 一键生成三档谱面」开始', true);
+  setStatus(t('status.audioImported'), true);
   menuReturnTimer = setTimeout(() => { menuReturnTimer = null; showScreen('menu'); }, 1600);
 }
 
@@ -234,12 +236,12 @@ const DIFF_COLOR = {
   'AI Easy': '#7ef29a', 'AI Normal': '#67c8ff', 'AI Expert': '#ff6ad5'
 };
 const MODE_DESC = {
-  Standard: '标准双剑',
-  NoArrows: '无方向箭头',
-  OneSaber: '仅蓝色鼠标剑',
-  '90Degree': '90° 旋转（本游戏忽略旋转）',
-  '360Degree': '360° 旋转（本游戏忽略旋转）',
-  Lightshow: '灯光秀（通常无音符）'
+  Standard: 'menu.mode.Standard',
+  NoArrows: 'menu.mode.NoArrows',
+  OneSaber: 'menu.mode.OneSaber',
+  '90Degree': 'menu.mode.90Degree',
+  '360Degree': 'menu.mode.360Degree',
+  Lightshow: 'menu.mode.Lightshow'
 };
 let curMode = null;
 
@@ -254,7 +256,7 @@ function renderMapUi() {
   els.trackName.textContent = '✓ ' + file_label();
   els.songTitle.textContent = info.songName + (info.subName ? ` — ${info.subName}` : '');
   els.songArtist.textContent =
-    (info.artist || '未知艺术家') + (info.mapper ? ` · 制谱 ${info.mapper}` : '');
+    (info.artist || t('defaults.unknownArtist')) + (info.mapper ? t('defaults.mapperPrefix') + info.mapper : '');
   els.mBpm.textContent = `${Math.round(info.bpm)}`;
   els.mDur.textContent = fmtDur(loaded.audioBuffer.duration);
   els.mMapper.textContent = info.mapper || '—';
@@ -278,7 +280,7 @@ function renderMapUi() {
   modes.forEach(m => {
     const b = document.createElement('button');
     b.textContent = m;
-    b.title = MODE_DESC[m] || m;
+    b.title = t(MODE_DESC[m] || m);
     b.addEventListener('click', () => {
       curMode = m;
       [...els.modeRow.children].forEach(x => x.classList.toggle('sel', x.textContent === m));
@@ -306,7 +308,7 @@ function renderDiffPills() {
   if (!list.length) {
     const hint = document.createElement('button');
     hint.className = 'pill';
-    hint.textContent = '尚无谱面 · 点下方生成';
+    hint.textContent = t('diff.empty');
     hint.disabled = true;
     hint.style.opacity = '.45';
     els.diffList.appendChild(hint);
@@ -315,7 +317,9 @@ function renderDiffPills() {
   list.forEach((d, k) => {
     const b = document.createElement('button');
     b.className = 'pill';
-    b.textContent = d.difficulty;
+    const diffKey = 'diff.' + d.difficulty;
+const localized = t(diffKey);
+b.textContent = localized !== diffKey ? localized : d.difficulty;
     b.title = `${d.characteristic}${d.njs ? ' · NJS ' + d.njs : ''}`;
     b.style.setProperty('--dc', DIFF_COLOR[d.difficulty] || '#8a93b8');
     b.style.animationDelay = `${k * 70}ms`;
@@ -325,7 +329,7 @@ function renderDiffPills() {
 }
 
 function file_label() {
-  return lastZipName || '谱面';
+  return lastZipName || t('defaults.chart');
 }
 
 function selectDiff(globalIdx) {
@@ -453,17 +457,17 @@ function composeRecordingFrame() {
   ctx.textAlign = 'center';
   ctx.font = `500 ${13 * s}px Rajdhani, sans-serif`;
   ctx.fillStyle = '#a8b0ca';
-  ctx.fillText('■ 红·键盘  按箭头方向按键  |  ■ 蓝·鼠标  碰到即切，躲开黑炸弹', width / 2, height - 38 * s);
+  ctx.fillText(t('video.watermark'), width / 2, height - 38 * s);
 }
 
 function startVideoRecording() {
   try {
-    if (!window.MediaRecorder) throw new Error('浏览器不支持录制');
+    if (!window.MediaRecorder) throw new Error(t('error.noRecordSupport'));
     recordCanvas = document.createElement('canvas');
     recordCanvas.width = els.canvas.width;
     recordCanvas.height = els.canvas.height;
     recordCtx = recordCanvas.getContext('2d');
-    if (!recordCtx) throw new Error('无法创建录像画布');
+    if (!recordCtx) throw new Error(t('error.noRecordCanvas'));
     composeRecordingFrame();
     const videoTrack = recordCanvas.captureStream(30).getVideoTracks()[0];
     const tracks = [videoTrack];
@@ -475,7 +479,7 @@ function startVideoRecording() {
     } catch (e) { console.warn('[BeatSlash]', e); }
     const mime = ['video/webm;codecs=vp8,opus', 'video/webm;codecs=vp9,opus', 'video/webm']
       .find(t => MediaRecorder.isTypeSupported(t));
-    if (!mime) throw new Error('找不到支持的编码格式');
+    if (!mime) throw new Error(t('error.noRecordCodec'));
     const rec = new MediaRecorder(new MediaStream(tracks), { mimeType: mime, videoBitsPerSecond: 4500000 });
     const chunks = [];
     rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
@@ -484,7 +488,7 @@ function startVideoRecording() {
     return true;
   } catch (e) {
     vidRec = null;
-    setStatus(`录像启动失败：${e.message}`, false);
+    setStatus(t('status.recordStartFail', { error: e.message }), false);
     return false;
   }
 }
@@ -502,16 +506,16 @@ function stopVideoRecording(save) {
       const blob = new Blob(v.chunks, { type: 'video/webm' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      const base = (lastZipName || 'BeatSlash').replace(/\.zip$/i, '');
+      const base = (lastZipName || t('defaults.recordBase')).replace(/\.zip$/i, '');
       a.href = url;
       a.download = `BeatSlash_${base}_${Date.now()}.webm`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 10000);
-      setStatus('演示视频已导出 (.webm)，安卓手机可直接播放', true);
+      setStatus(t('status.recordExported'), true);
     } catch (e) {
-      setStatus(`视频保存失败：${e.message}`, false);
+      setStatus(t('status.recordSaveFail', { error: e.message }), false);
     }
   };
   try { v.rec.stop(); } catch (e) { console.warn('[BeatSlash]', e); }
@@ -568,13 +572,13 @@ function startGame(isDemo) {
 }
 
 const TROPHY_TIERS = {
-  SS: { grad: ['#fffbe0', '#ffd54a', '#ff9a1f'], rim: '#ffedb0', cls: 'tr-ss', label: '完美大师', star: true },
-  S:  { grad: ['#fff6cf', '#ffd54a', '#e89400'], rim: '#ffe08a', cls: 'tr-s', label: '超凡演绎', star: true },
-  A:  { grad: ['#f6f9ff', '#dbe4f0', '#96a6c0'], rim: '#ffffff', cls: 'tr-a', label: '锋芒乍现' },
-  B:  { grad: ['#ffe9cf', '#e0a06a', '#96602e'], rim: '#ffd0a0', cls: 'tr-b', label: '渐入佳境' },
-  C:  { grad: ['#eef1f6', '#a7b0c0', '#68738a'], rim: '#cdd4e0', cls: 'tr-c', label: '初窥门径' },
-  D:  { grad: ['#d8dce4', '#8d95a4', '#525a68'], rim: '#b8bfcc', cls: 'tr-d', label: '再接再厉' },
-  F:  { grad: ['#3a3f4d', '#23262f', '#12141a'], rim: '#ff4d6d', cls: 'tr-f', label: '别灰心，再来！' }
+  SS: { grad: ['#fffbe0', '#ffd54a', '#ff9a1f'], rim: '#ffedb0', cls: 'tr-ss', labelKey: 'result.rank.SS', star: true },
+  S:  { grad: ['#fff6cf', '#ffd54a', '#e89400'], rim: '#ffe08a', cls: 'tr-s', labelKey: 'result.rank.S', star: true },
+  A:  { grad: ['#f6f9ff', '#dbe4f0', '#96a6c0'], rim: '#ffffff', cls: 'tr-a', labelKey: 'result.rank.A' },
+  B:  { grad: ['#ffe9cf', '#e0a06a', '#96602e'], rim: '#ffd0a0', cls: 'tr-b', labelKey: 'result.rank.B' },
+  C:  { grad: ['#eef1f6', '#a7b0c0', '#68738a'], rim: '#cdd4e0', cls: 'tr-c', labelKey: 'result.rank.C' },
+  D:  { grad: ['#d8dce4', '#8d95a4', '#525a68'], rim: '#b8bfcc', cls: 'tr-d', labelKey: 'result.rank.D' },
+  F:  { grad: ['#3a3f4d', '#23262f', '#12141a'], rim: '#ff4d6d', cls: 'tr-f', labelKey: 'result.rank.F' }
 };
 
 function trophySVG(t) {
@@ -608,7 +612,7 @@ function trophySVG(t) {
 function showResult(res) {
   try {
     els.resultRank.textContent = res.rank;
-    els.resultTitle.textContent = res.demo ? '演示结束' : res.success ? 'CLEAR!' : 'FAILED';
+    els.resultTitle.textContent = res.demo ? t('result.demo') : res.success ? t('result.clear') : t('result.failed');
     els.resultTitle.classList.toggle('fail', !res.demo && !res.success);
     els.resultRank.classList.toggle('fail', !res.demo && !res.success);
     // trophy
@@ -624,7 +628,7 @@ function showResult(res) {
       els.resultTrophy.dataset.confetti = (!res.demo && tier.cls === 'tr-ss') ? '1' : '';
     }
     if (els.resultRankLabel) {
-      els.resultRankLabel.textContent = res.demo ? '' : tier.label;
+      els.resultRankLabel.textContent = res.demo ? '' : t(tier.labelKey);
     }
     const panel = els.resultTrophy && els.resultTrophy.closest('.result-panel');
     if (panel) {
@@ -661,11 +665,11 @@ function showResult(res) {
       const better = !prev || res.score > prev.score;
       if (better && res.success) {
         safeStorage.set(bk, JSON.stringify({ score: res.score, acc: res.acc, rank: res.rank }));
-        els.resultBest.textContent = '★ 新纪录！';
+        els.resultBest.textContent = t('result.best.new');
         els.resultBest.classList.remove('prev');
         els.resultBest.style.display = 'block';
       } else if (prev) {
-        els.resultBest.textContent = `本地最佳 ${prev.score}（${prev.acc.toFixed(1)}% · ${prev.rank}）`;
+        els.resultBest.textContent = t('result.best.prev', { score: prev.score, acc: prev.acc.toFixed(1), rank: prev.rank });
         els.resultBest.classList.add('prev');
         els.resultBest.style.display = 'block';
       } else {
@@ -689,9 +693,9 @@ els.autoGenBtn.addEventListener('click', async () => {
   els.startBtn.disabled = true;
   els.demoBtn.disabled = true;
   showScreen('loading');
-  setStatus('分析音频节奏（人声 + 乐器分频段）…', true);
+  setStatus(t('status.analyzing'), true);
   try {
-    const res = await Game.genChart(loaded.audioBuffer, p => setStatus(`分析音频 ${Math.round(p * 100)}%`, true));
+    const res = await Game.genChart(loaded.audioBuffer, p => setStatus(t('status.analyzingProgress', { percent: Math.round(p * 100) }), true));
     let firstIdx = -1, normalIdx = -1;
     for (const d of res.diffs) {
       loaded.info.diffs.push({
@@ -704,12 +708,12 @@ els.autoGenBtn.addEventListener('click', async () => {
     curMode = 'Standard';
     loaded.info.bpm = res.bpm;
     els.mBpm.textContent = `${Math.round(res.bpm)}`;
-    if (loaded.audioOnly) els.songArtist.textContent = '本地音频 · AI 自动谱面';
+    if (loaded.audioOnly) els.songArtist.textContent = t('defaults.localAudioAi');
     renderDiffPills();
     selectDiff(normalIdx >= 0 ? normalIdx : firstIdx);
-    setStatus(`生成完成：${res.analysis.onsets} 个节奏点 · BPM ≈ ${res.bpm}，选难度后点开始`, true);
+    setStatus(t('status.genDone', { onsets: res.analysis.onsets, bpm: res.bpm }), true);
   } catch (e) {
-    setStatus('生成失败：' + (e && e.message ? e.message : e), false);
+    setStatus(t('status.genFail', { error: (e && e.message ? e.message : e) }), false);
   }
   els.autoGenBtn.disabled = false;
   await waitBack(2000);
@@ -889,7 +893,7 @@ function bindRange(range, valEl, fmt, apply, key) {
   sync();
 }
 
-bindRange(els.speedRange, els.speedVal, v => `×${v.toFixed(2)}`,
+bindRange(els.speedRange, els.speedVal, v => t('pause.speed.format', { value: v.toFixed(2) }),
   v => { if (typeof Game !== 'undefined') Game.setSpeedMult(v); }, 'speed');
 
 const pauseSpeedRange = $('pause-speed-range');
@@ -897,13 +901,13 @@ const pauseSpeedVal = $('pause-speed-val');
 function syncPauseSpeed() {
   if (!pauseSpeedRange) return;
   pauseSpeedRange.value = els.speedRange.value;
-  pauseSpeedVal.textContent = `×${Number(els.speedRange.value).toFixed(2)}`;
+  pauseSpeedVal.textContent = t('pause.speed.format', { value: Number(els.speedRange.value).toFixed(2) });
 }
 if (pauseSpeedRange) {
   pauseSpeedRange.addEventListener('input', () => {
     const v = Number(pauseSpeedRange.value);
     els.speedRange.value = String(v);
-    els.speedVal.textContent = `×${v.toFixed(2)}`;
+    els.speedVal.textContent = t('pause.speed.format', { value: v.toFixed(2) });
     safeStorage.set(store('speed'), String(v));
     if (typeof Game !== 'undefined') Game.setSpeedMult(v);
     syncPauseSpeed();
@@ -915,4 +919,36 @@ bindRange(els.volRange, els.volVal, v => `${Math.round(v * 100)}%`,
   v => { if (gainNode) gainNode.gain.value = v; }, 'vol');
 bindRange(els.offsetRange, els.offsetVal, v => `${v > 0 ? '+' : ''}${v}ms`, () => {}, 'offset');
 
-showScreen('menu');
+function syncLangRow() {
+  const row = $('lang-row');
+  if (!row) return;
+  const cur = getLang();
+  for (const b of row.querySelectorAll('button')) {
+    b.classList.toggle('sel', b.dataset.lang === cur);
+  }
+}
+const langRow = $('lang-row');
+if (langRow) {
+  langRow.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b || !getSupported().includes(b.dataset.lang)) return;
+    setLang(b.dataset.lang);
+    syncLangRow();
+  });
+}
+
+function refreshDynamicI18n() {
+  if (pauseSpeedVal) pauseSpeedVal.textContent = t('pause.speed.format', { value: Number(els.speedRange.value).toFixed(2) });
+  els.speedVal.textContent = t('pause.speed.format', { value: Number(els.speedRange.value).toFixed(2) });
+  syncLangRow();
+  if (loaded) renderMapUi();
+}
+onChange(refreshDynamicI18n);
+
+(async () => {
+  await initI18n();
+  applyI18nToDOM(document);
+  refreshDynamicI18n();
+  syncLangRow();
+  showScreen('menu');
+})();

@@ -21,6 +21,7 @@ import { COL_X, LAYER_Y, HIT_Z, NOTE_SIZE, COL,
 } from '../core/constants.js';
 import { makeCanvas, texGrid, texGlow, texFace, texRing, roundRect, hexCss } from '../core/utils.js';
 import { dispatchError } from '../input/events.js';
+import { t } from '../ui/i18n.js';
 
 export function initRenderer(canvasEl) {
   if (state.inited) return;
@@ -31,7 +32,7 @@ export function initRenderer(canvasEl) {
 
   canvasEl.addEventListener('webglcontextlost', e => {
     e.preventDefault();
-    dispatchError('WebGL 上下文丢失，请刷新页面重试');
+    dispatchError(t('error.webglLost'));
     if (state.playing) {
       state.playing = false;
       state.finished = true;
@@ -39,7 +40,7 @@ export function initRenderer(canvasEl) {
   }, false);
 
   canvasEl.addEventListener('webglcontextrestored', () => {
-    dispatchError('WebGL 上下文已恢复，建议重新开始');
+    dispatchError(t('error.webglRestore'));
     if (state.renderer) {
       state.renderer.dispose();
       state.renderer = null;

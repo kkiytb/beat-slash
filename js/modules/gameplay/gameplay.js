@@ -3,7 +3,7 @@ import {
   COL_X, LAYER_Y, HIT_Z, NOTE_SIZE, DESPAWN_Z, SLASH_MIN, MOUSE_WIN,
   LEAD_DIST, BASE_SPEED, WIN_GOOD, WIN_PERFECT,
   HAND_RED, HAND_BLUE, DIR_DOT, DIR_ANGLE, CUT_ANGLE, SNAP4, COL,
-  TIER_BASE, TIER_TEXT, TIER_COLOR,
+  TIER_BASE, TIER_TEXT_KEYS, TIER_COLOR,
   SWING_ANGLES, LEFT_PIVOT, IDLE_ANGLE,
   AUTO_REST,
   LEAD_CLAMP_MIN, LEAD_CLAMP_MAX,
@@ -24,6 +24,7 @@ import { clamp, lerpAngle, segHitsBox, normKeyDir as coreNormKeyDir } from '../c
 import { playHitSfx, playThudSfx } from '../audio/audio.js';
 import { dispatchError } from '../input/events.js';
 import { hashChart } from './replay.js';
+import { t } from '../ui/i18n.js';
 
 const safeStorage = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -148,7 +149,7 @@ export function doHit(n, o) {
   const dvx = Math.cos(o.angle), dvy = Math.sin(o.angle);
   spawnBurst(pos, n.hand, dvx, dvy, tier === 0 ? 3 : (o.power || 5));
   spawnFlash(pos, n.hand === HAND_RED ? 0xff2d55 : 0x22d3ee);
-  popupAt(pos.x, pos.y, pos.z, TIER_TEXT[tier], TIER_COLOR[tier]);
+  popupAt(pos.x, pos.y, pos.z, t(TIER_TEXT_KEYS[tier]), TIER_COLOR[tier]);
   playHitSfx(tier);
   if (state.dancer) state.dancer.react(tier);
   if (tier === 2) state.shake = Math.min(1, state.shake + 0.55);
@@ -167,7 +168,7 @@ export function missNote(n) {
   }
   const mp = n.poolItem ? n.poolItem.group.position : null;
   const mx = mp ? mp.x : COL_X[n.col], my = mp ? mp.y : LAYER_Y[n.layer], mz = mp ? mp.z : HIT_Z;
-  popupAt(mx, my, mz, 'MISS', '#ff5470');
+  popupAt(mx, my, mz, t('popup.miss'), '#ff5470');
   if (state.dancer) { state.dancer.miss(); state.danceEnergy = Math.max(0.15, state.danceEnergy * 0.55); }
   if (state.hp <= 0 && !state.finished) finish(false);
 }
@@ -176,7 +177,7 @@ export function wrongDir(n) {
   state.combo = 0;
   state.hp -= 3;
   const wp = n.poolItem.group.position;
-  popupAt(wp.x, wp.y, wp.z, '方向错误', '#ff8a5c');
+  popupAt(wp.x, wp.y, wp.z, t('popup.badDir'), '#ff8a5c');
   if (state.dancer) state.dancer.miss();
   playThudSfx();
 }
@@ -261,7 +262,7 @@ function bombHit(b, idx) {
   state.hp -= 15;
   spawnBurst(pos, 2, Math.random() - 0.5, Math.random() - 0.5, 6);
   spawnFlash(pos, 0xff3333);
-  popupAt(pos.x, pos.y, pos.z, '炸弹!', '#ff2222');
+  popupAt(pos.x, pos.y, pos.z, t('popup.bomb'), '#ff2222');
   playThudSfx();
   if (state.dancer) state.dancer.react(0);
   if (state.hp <= 0 && !state.finished) finish(false);

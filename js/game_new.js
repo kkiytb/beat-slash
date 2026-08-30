@@ -16,6 +16,7 @@ import { updateHud } from './modules/ui/hud.js';
 import { dispatchEvent, dispatchError } from './modules/input/events.js';
 import { ReplayRecorder, ReplayPlayer, GhostManager, hashChart } from './modules/gameplay/replay.js';
 import { generateFromBuffer } from './modules/auto/autogen.js';
+import { t } from './modules/ui/i18n.js';
 
 window.THREE = THREE;
 
@@ -199,7 +200,7 @@ export const Game = (() => {
       state.renderFailCount++;
       console.error('[BeatSlash] 渲染异常 #' + state.renderFailCount + ':', err);
       if (state.renderFailCount >= 3 && state.rtScene && !state.videoRecording) {
-        dispatchError(err, '后期渲染失败，已自动降级为普通渲染');
+        dispatchError(err, t('error.postFxFail'));
         state.rtScene = null;
       }
     }
@@ -209,7 +210,7 @@ export const Game = (() => {
       } catch (err) {
         console.error('[BeatSlash] 录像合成异常:', err);
         state.onFrameCb = null;
-        dispatchError(err, '录像画面合成失败，已停止录制画面合成');
+        dispatchError(err, t('error.recordingFrameFail'));
       }
     }
   }
